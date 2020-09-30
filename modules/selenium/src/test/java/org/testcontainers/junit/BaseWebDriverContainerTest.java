@@ -1,6 +1,7 @@
 package org.testcontainers.junit;
 
 import static java.lang.String.format;
+import static org.rnorth.visibleassertions.VisibleAssertions.assertEquals;
 import static org.rnorth.visibleassertions.VisibleAssertions.assertTrue;
 
 import java.util.concurrent.TimeUnit;
