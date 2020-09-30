@@ -86,7 +86,6 @@ public class KafkaContainerTest {
 
             // withKafkaNetwork {
             GenericContainer<?> application = new GenericContainer<>(DockerImageName.parse("alpine"))
-                )
                 .withNetwork(network)
             // }
                 .withNetworkAliases("dummy")
