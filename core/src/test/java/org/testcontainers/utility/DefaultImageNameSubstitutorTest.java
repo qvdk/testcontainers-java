@@ -14,13 +14,13 @@ public class DefaultImageNameSubstitutorTest {
 
     public static final DockerImageName ORIGINAL_IMAGE = DockerImageName.parse("foo");
     public static final DockerImageName SUBSTITUTE_IMAGE = DockerImageName.parse("bar");
-    private DefaultImageNameSubstitutor underTest;
+    private ConfigurationFileImageNameSubstitutor underTest;
     private TestcontainersConfiguration mockConfiguration;
 
     @Before
     public void setUp() {
         mockConfiguration = mock(TestcontainersConfiguration.class);
-        underTest = new DefaultImageNameSubstitutor(mockConfiguration);
+        underTest = new ConfigurationFileImageNameSubstitutor(mockConfiguration);
     }
 
     @Test

@@ -55,6 +55,8 @@ public abstract class ImageNameSubstitutor implements Function<DockerImageName, 
      */
     protected abstract int getPriority();
 
+    protected abstract String getDescription();
+
     static class LogWrappedImageNameSubstitutor extends ImageNameSubstitutor {
         @VisibleForTesting
         final ImageNameSubstitutor wrappedInstance;
@@ -80,6 +82,11 @@ public abstract class ImageNameSubstitutor implements Function<DockerImageName, 
         @Override
         protected int getPriority() {
             return wrappedInstance.getPriority();
+        }
+
+        @Override
+        protected String getDescription() {
+            return wrappedInstance.getDescription();
         }
     }
 }

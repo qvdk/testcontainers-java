@@ -1,0 +1,5 @@
+description = "Testcontainers :: Image Name Substitutors :: Prefxing"
+
+dependencies {
+    compile project(":testcontainers")
+}

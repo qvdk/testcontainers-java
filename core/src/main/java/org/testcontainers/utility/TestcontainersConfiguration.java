@@ -2,6 +2,17 @@ package org.testcontainers.utility;
 
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.ImmutableMap;
+import lombok.AccessLevel;
+import lombok.Data;
+import lombok.Getter;
+import lombok.NonNull;
+import lombok.RequiredArgsConstructor;
+import lombok.SneakyThrows;
+import lombok.Synchronized;
+import lombok.extern.slf4j.Slf4j;
+import org.jetbrains.annotations.Nullable;
+import org.testcontainers.UnstableAPI;
+
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -16,18 +27,9 @@ import java.util.Optional;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
-import lombok.AccessLevel;
-import lombok.Data;
-import lombok.Getter;
-import lombok.NonNull;
-import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
-import lombok.Synchronized;
-import lombok.extern.slf4j.Slf4j;
-import org.testcontainers.UnstableAPI;
 
 /**
- * Provides a mechanism for fetching configuration/defaults from the classpath.
+ * Provides a mechanism for fetching configuration/default settings.
  */
 @Data
 @Slf4j
@@ -162,6 +164,23 @@ public class TestcontainersConfiguration {
 
     public Integer getImagePullPauseTimeout() {
         return Integer.parseInt((String) properties.getOrDefault("pull.pause.timeout", "30"));
+    }
+
+    /**
+     * Gets a configured setting from an environment variable (if present) or a configuration file property otherwise.
+     * @param propertyName name of configuration file property (dot-separated lower case)
+     * @return the found value, or null if not set
+     */
+    @Nullable
+    public String getEnvVarOrProperty(final String propertyName) {
+        String envVarName = propertyName.replaceAll("\\.", "_").toUpperCase();
+        if (!propertyName.startsWith("TESTCONTAINERS_")) {
+            envVarName = "TESTCONTAINERS_" + envVarName;
+        }
+
+        return Optional
+            .ofNullable(System.getenv().get(envVarName))
+            .orElse((String) environmentProperties.get(propertyName));
     }
 
     @Synchronized
