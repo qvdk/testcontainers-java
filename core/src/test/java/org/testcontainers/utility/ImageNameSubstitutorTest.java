@@ -1,8 +1,9 @@
 package org.testcontainers.utility;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertTrue;
+
+import org.junit.Test;
+import org.testcontainers.utility.ImageNameSubstitutor.LogWrappedImageNameSubstitutor;
 
 public class ImageNameSubstitutorTest {
 
@@ -10,6 +11,8 @@ public class ImageNameSubstitutorTest {
     public void simpleServiceLoadingTest() {
         final ImageNameSubstitutor imageNameSubstitutor = ImageNameSubstitutor.instance();
 
-        assertTrue(imageNameSubstitutor instanceof DefaultImageNameSubstitutor);
+        assertTrue(imageNameSubstitutor instanceof LogWrappedImageNameSubstitutor);
+        assertTrue(((LogWrappedImageNameSubstitutor) imageNameSubstitutor).wrappedInstance instanceof DefaultImageNameSubstitutor);
+
     }
 }
