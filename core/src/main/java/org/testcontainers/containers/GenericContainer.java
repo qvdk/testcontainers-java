@@ -239,7 +239,7 @@ public class GenericContainer<SELF extends GenericContainer<SELF>>
      */
     @Deprecated
     public GenericContainer() {
-        this(TestcontainersConfiguration.getInstance().getTinyDockerImageName().asCanonicalNameString());
+        this(TestcontainersConfiguration.getInstance().getTinyImage());
     }
 
     /**

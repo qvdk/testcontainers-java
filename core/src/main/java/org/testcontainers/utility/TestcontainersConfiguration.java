@@ -124,24 +124,6 @@ public class TestcontainersConfiguration {
         return getImage(SSHD_IMAGE).asCanonicalNameString();
     }
 
-    @Deprecated
-    public String getRyukImage() {
-        return getRyukDockerImageName().asCanonicalNameString();
-    }
-
-    public DockerImageName getRyukDockerImageName() {
-        return getImage("ryuk.container.image", "testcontainers/ryuk:0.3.0");
-    }
-
-    @Deprecated
-    public String getSSHdImage() {
-        return getSSHdDockerImageName().asCanonicalNameString();
-    }
-
-    public DockerImageName getSSHdDockerImageName() {
-        return getImage("sshd.container.image", "testcontainers/sshd:1.0.0");
-    }
-
     public Integer getRyukTimeout() {
         return Integer.parseInt((String) properties.getOrDefault("ryuk.container.timeout", "30"));
     }
