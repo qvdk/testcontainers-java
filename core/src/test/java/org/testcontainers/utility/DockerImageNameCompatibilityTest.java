@@ -32,6 +32,8 @@ public class DockerImageNameCompatibilityTest {
          */
         assertFalse("foo:4.5.6 != foo:1.2.3", subject.isCompatibleWith(DockerImageName.parse("foo:1.2.3")));
         assertTrue("foo:4.5.6 ~= foo", subject.isCompatibleWith(DockerImageName.parse("foo")));
+        assertTrue("foo:4.5.6 ~= foo:latest", subject.isCompatibleWith(DockerImageName.parse("foo:latest")));
+        assertTrue("foo:4.5.6 ~= foo:latest", subject.isCompatibleWith(DockerImageName.parse("foo:1.2.3").withTag("latest")));
     }
 
     @Test

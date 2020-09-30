@@ -1,5 +1,9 @@
 package org.testcontainers.junit;
 
+import static java.lang.String.format;
+import static org.rnorth.visibleassertions.VisibleAssertions.assertTrue;
+
+import java.util.concurrent.TimeUnit;
 import org.jetbrains.annotations.NotNull;
 import org.junit.ClassRule;
 import org.openqa.selenium.By;
@@ -10,12 +14,6 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.HttpWaitStrategy;
 import org.testcontainers.utility.DockerImageName;
-
-import java.util.concurrent.TimeUnit;
-
-import static java.lang.String.format;
-import static org.rnorth.visibleassertions.VisibleAssertions.assertEquals;
-import static org.rnorth.visibleassertions.VisibleAssertions.assertTrue;
 
 /**
  *

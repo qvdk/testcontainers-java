@@ -2,16 +2,13 @@ package org.testcontainers.utility;
 
 
 import com.google.common.net.HostAndPort;
+import java.util.regex.Pattern;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.With;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.testcontainers.utility.Versioning.Sha256Versioning;
-import org.testcontainers.utility.Versioning.TagVersioning;
-
-import java.util.regex.Pattern;
 
 @EqualsAndHashCode(exclude = { "rawName", "compatibleSubstituteFor" })
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -26,7 +23,7 @@ public final class DockerImageName {
     private final String rawName;
     private final String registry;
     private final String repo;
-    @NotNull @With(AccessLevel.PRIVATE)
+    @Nullable @With(AccessLevel.PRIVATE)
     private final Versioning versioning;
     @Nullable @With(AccessLevel.PRIVATE)
     private final DockerImageName compatibleSubstituteFor;
@@ -69,10 +66,10 @@ public final class DockerImageName {
 
         if (remoteName.contains("@sha256:")) {
             repo = remoteName.split("@sha256:")[0];
-            versioning = new Sha256Versioning(remoteName.split("@sha256:")[1]);
+            versioning = new Versioning.Sha256Versioning(remoteName.split("@sha256:")[1]);
         } else if (remoteName.contains(":")) {
             repo = remoteName.split(":")[0];
-            versioning = new TagVersioning(remoteName.split(":")[1]);
+            versioning = new Versioning.TagVersioning(remoteName.split(":")[1]);
         } else {
             repo = remoteName;
             versioning = Versioning.ANY;
@@ -111,10 +108,10 @@ public final class DockerImageName {
 
         if (version.startsWith("sha256:")) {
             repo = remoteName;
-            versioning = new Sha256Versioning(version.replace("sha256:", ""));
+            versioning = new Versioning.Sha256Versioning(version.replace("sha256:", ""));
         } else {
             repo = remoteName;
-            versioning = new TagVersioning(version);
+            versioning = new Versioning.TagVersioning(version);
         }
 
         compatibleSubstituteFor = null;
@@ -135,7 +132,7 @@ public final class DockerImageName {
      * @return the versioned part of this name (tag or sha256)
      */
     public String getVersionPart() {
-        return versioning.toString();
+        return versioning == null ? "latest" : versioning.toString();
     }
 
     /**
@@ -161,7 +158,7 @@ public final class DockerImageName {
         if (!REPO_NAME.matcher(repo).matches()) {
             throw new IllegalArgumentException(repo + " is not a valid Docker image name (in " + rawName + ")");
         }
-        if (!versioning.isValid()) {
+        if (versioning != null && !versioning.isValid()) {
             throw new IllegalArgumentException(versioning + " is not a valid image versioning identifier (in " + rawName + ")");
         }
     }
@@ -175,7 +172,7 @@ public final class DockerImageName {
      * @return an immutable copy of this {@link DockerImageName} with the new version tag
      */
     public DockerImageName withTag(final String newTag) {
-        return withVersioning(new TagVersioning(newTag));
+        return withVersioning(new Versioning.TagVersioning(newTag));
     }
 
     /**

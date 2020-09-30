@@ -1,6 +1,21 @@
 package org.testcontainers.utility;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableMap;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Properties;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.stream.Stream;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.Getter;
@@ -10,19 +25,6 @@ import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.testcontainers.UnstableAPI;
-
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Objects;
-import java.util.Properties;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
 
 /**
  * Provides a mechanism for fetching configuration/defaults from the classpath.
@@ -35,6 +37,30 @@ public class TestcontainersConfiguration {
     private static String PROPERTIES_FILE_NAME = "testcontainers.properties";
 
     private static File ENVIRONMENT_CONFIG_FILE = new File(System.getProperty("user.home"), "." + PROPERTIES_FILE_NAME);
+
+    private static final String AMBASSADOR_IMAGE = "richnorth/ambassador:latest";
+    private static final String SOCAT_IMAGE = "alpine/socat:latest";
+    private static final String VNC_RECORDER_IMAGE = "testcontainers/vnc-recorder:1.1.0";
+    private static final String COMPOSE_IMAGE = "docker/compose:1.24.1";
+    private static final String ALPINE_IMAGE = "alpine:3.5";
+    private static final String RYUK_IMAGE = "testcontainers/ryuk:0.3.0";
+    private static final String KAFKA_IMAGE = "confluentinc/cp-kafka";
+    private static final String PULSAR_IMAGE = "apachepulsar/pulsar";
+    private static final String LOCALSTACK_IMAGE = "localstack/localstack";
+    private static final String SSHD_IMAGE = "testcontainers/sshd:1.0.0";
+
+    private static final ImmutableMap<DockerImageName, String> CONTAINER_MAPPING = ImmutableMap.<DockerImageName, String>builder()
+        .put(DockerImageName.parse(AMBASSADOR_IMAGE), "ambassador.container.image")
+        .put(DockerImageName.parse(SOCAT_IMAGE), "socat.container.image")
+        .put(DockerImageName.parse(VNC_RECORDER_IMAGE), "vncrecorder.container.image")
+        .put(DockerImageName.parse(COMPOSE_IMAGE), "compose.container.image")
+        .put(DockerImageName.parse(ALPINE_IMAGE), "tinyimage.container.image")
+        .put(DockerImageName.parse(RYUK_IMAGE), "ryuk.container.image")
+        .put(DockerImageName.parse(KAFKA_IMAGE), "kafka.container.image")
+        .put(DockerImageName.parse(PULSAR_IMAGE), "pulsar.container.image")
+        .put(DockerImageName.parse(LOCALSTACK_IMAGE), "localstack.container.image")
+        .put(DockerImageName.parse(SSHD_IMAGE), "sshd.container.image")
+        .build();
 
     @Getter(lazy = true)
     private static final TestcontainersConfiguration instance = loadConfiguration();
@@ -58,60 +84,44 @@ public class TestcontainersConfiguration {
         this.properties.putAll(environmentProperties);
     }
 
-    private DockerImageName getImage(final String key, final String defaultValue) {
-        return DockerImageName
-            .parse(properties.getProperty(key, defaultValue).trim())
-            .asCompatibleSubstituteFor(defaultValue);
-    }
-
     @Deprecated
     public String getAmbassadorContainerImage() {
-        return getAmbassadorContainerDockerImageName().asCanonicalNameString();
-    }
-
-    @Deprecated
-    public DockerImageName getAmbassadorContainerDockerImageName() {
-        return getImage("ambassador.container.image", "richnorth/ambassador:latest");
+        return getImage(AMBASSADOR_IMAGE).asCanonicalNameString();
     }
 
     @Deprecated
     public String getSocatContainerImage() {
-        return getSocatDockerImageName().asCanonicalNameString();
-    }
-
-    public DockerImageName getSocatDockerImageName() {
-        return getImage("socat.container.image", "alpine/socat:latest");
+        return getImage(SOCAT_IMAGE).asCanonicalNameString();
     }
 
     @Deprecated
     public String getVncRecordedContainerImage() {
-        return getVncDockerImageName().asCanonicalNameString();
-    }
-
-    public DockerImageName getVncDockerImageName() {
-        return getImage("vncrecorder.container.image", "testcontainers/vnc-recorder:1.1.0");
+        return getImage(VNC_RECORDER_IMAGE).asCanonicalNameString();
     }
 
     @Deprecated
     public String getDockerComposeContainerImage() {
-        return getDockerComposeDockerImageName().asCanonicalNameString();
-    }
-
-    public DockerImageName getDockerComposeDockerImageName() {
-        return getImage("compose.container.image", "docker/compose:1.24.1");
+        return getImage(COMPOSE_IMAGE).asCanonicalNameString();
     }
 
     @Deprecated
     public String getTinyImage() {
-        return getTinyDockerImageName().asCanonicalNameString();
-    }
-
-    public DockerImageName getTinyDockerImageName() {
-        return getImage("tinyimage.container.image", "alpine:3.5");
+        return getImage(ALPINE_IMAGE).asCanonicalNameString();
     }
 
     public boolean isRyukPrivileged() {
-        return Boolean.parseBoolean((String) properties.getOrDefault("ryuk.container.privileged", "false"));
+        return Boolean
+            .parseBoolean((String) properties.getOrDefault("ryuk.container.privileged", "false"));
+    }
+
+    @Deprecated
+    public String getRyukImage() {
+        return getImage(RYUK_IMAGE).asCanonicalNameString();
+    }
+
+    @Deprecated
+    public String getSSHdImage() {
+        return getImage(SSHD_IMAGE).asCanonicalNameString();
     }
 
     @Deprecated
@@ -138,29 +148,17 @@ public class TestcontainersConfiguration {
 
     @Deprecated
     public String getKafkaImage() {
-        return getKafkaDockerImageName().asCanonicalNameString();
-    }
-
-    public DockerImageName getKafkaDockerImageName() {
-        return getImage("kafka.container.image", "confluentinc/cp-kafka");
+        return getImage(KAFKA_IMAGE).asCanonicalNameString();
     }
 
     @Deprecated
     public String getPulsarImage() {
-        return getPulsarDockerImageName().asCanonicalNameString();
-    }
-
-    public DockerImageName getPulsarDockerImageName() {
-        return getImage("pulsar.container.image", "apachepulsar/pulsar");
+        return getImage(PULSAR_IMAGE).asCanonicalNameString();
     }
 
     @Deprecated
     public String getLocalStackImage() {
-        return getLocalstackDockerImageName().asCanonicalNameString();
-    }
-
-    public DockerImageName getLocalstackDockerImageName() {
-        return getImage("localstack.container.image", "localstack/localstack");
+        return getImage(LOCALSTACK_IMAGE).asCanonicalNameString();
     }
 
     public boolean isDisableChecks() {
@@ -237,5 +235,25 @@ public class TestcontainersConfiguration {
             log.warn("Testcontainers config override was found on {} but could not be loaded", url, e);
         }
         return properties;
+    }
+
+    private DockerImageName getImage(final String defaultValue) {
+        return getConfiguredSubstituteImage(DockerImageName.parse(defaultValue));
+    }
+
+    DockerImageName getConfiguredSubstituteImage(DockerImageName original) {
+        for (final Map.Entry<DockerImageName, String> entry : CONTAINER_MAPPING.entrySet()) {
+            if (original.isCompatibleWith(entry.getKey())) {
+                return
+                    Optional.ofNullable(entry.getValue())
+                        .map(properties::get)
+                        .map(String::valueOf)
+                        .map(String::trim)
+                        .map(DockerImageName::parse)
+                        .orElse(original)
+                        .asCompatibleSubstituteFor(original);
+            }
+        }
+        return original;
     }
 }

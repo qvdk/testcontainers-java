@@ -61,7 +61,7 @@ public class KafkaContainerTest {
     @Test
     public void testUsageWithVersion() throws Exception {
         try (
-            KafkaContainer kafka = new KafkaContainer("5.2.1")
+            KafkaContainer kafka = new KafkaContainer("5.5.1")
         ) {
             kafka.start();
             testKafkaFunctionality(kafka.getBootstrapServers());
@@ -86,6 +86,7 @@ public class KafkaContainerTest {
 
             // withKafkaNetwork {
             GenericContainer<?> application = new GenericContainer<>(DockerImageName.parse("alpine"))
+                )
                 .withNetwork(network)
             // }
                 .withNetworkAliases("dummy")
