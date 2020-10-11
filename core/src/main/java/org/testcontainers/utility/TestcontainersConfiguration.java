@@ -42,7 +42,7 @@ public class TestcontainersConfiguration {
     private static File ENVIRONMENT_CONFIG_FILE = new File(System.getProperty("user.home"), "." + PROPERTIES_FILE_NAME);
 
     private static final String AMBASSADOR_IMAGE = "richnorth/ambassador:latest";
-    private static final String SOCAT_IMAGE = "alpine/socat:latest";
+    private static final String SOCAT_IMAGE = "alpine/socat:1.7.3.4-r0";
     private static final String VNC_RECORDER_IMAGE = "testcontainers/vnc-recorder:1.1.0";
     private static final String COMPOSE_IMAGE = "docker/compose:1.24.1";
     private static final String ALPINE_IMAGE = "alpine:3.5";
