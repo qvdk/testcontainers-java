@@ -41,16 +41,16 @@ public class TestcontainersConfiguration {
 
     private static File ENVIRONMENT_CONFIG_FILE = new File(System.getProperty("user.home"), "." + PROPERTIES_FILE_NAME);
 
-    private static final String AMBASSADOR_IMAGE = "richnorth/ambassador:latest";
-    private static final String SOCAT_IMAGE = "alpine/socat:1.7.3.4-r0";
-    private static final String VNC_RECORDER_IMAGE = "testcontainers/vnc-recorder:1.1.0";
-    private static final String COMPOSE_IMAGE = "docker/compose:1.24.1";
-    private static final String ALPINE_IMAGE = "alpine:3.5";
-    private static final String RYUK_IMAGE = "testcontainers/ryuk:0.3.0";
+    private static final String AMBASSADOR_IMAGE = "richnorth/ambassador";
+    private static final String SOCAT_IMAGE = "alpine/socat";
+    private static final String VNC_RECORDER_IMAGE = "testcontainers/vnc-recorder";
+    private static final String COMPOSE_IMAGE = "docker/compose";
+    private static final String ALPINE_IMAGE = "alpine";
+    private static final String RYUK_IMAGE = "testcontainers/ryuk";
     private static final String KAFKA_IMAGE = "confluentinc/cp-kafka";
     private static final String PULSAR_IMAGE = "apachepulsar/pulsar";
     private static final String LOCALSTACK_IMAGE = "localstack/localstack";
-    private static final String SSHD_IMAGE = "testcontainers/sshd:1.0.0";
+    private static final String SSHD_IMAGE = "testcontainers/sshd";
 
     private static final ImmutableMap<DockerImageName, String> CONTAINER_MAPPING = ImmutableMap.<DockerImageName, String>builder()
         .put(DockerImageName.parse(AMBASSADOR_IMAGE), "ambassador.container.image")
