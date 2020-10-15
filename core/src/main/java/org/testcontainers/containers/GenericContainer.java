@@ -242,10 +242,6 @@ public class GenericContainer<SELF extends GenericContainer<SELF>>
         this(TestcontainersConfiguration.getInstance().getTinyImage());
     }
 
-    /**
-     * @deprecated use {@link GenericContainer(DockerImageName)} instead
-     */
-    @Deprecated
     public GenericContainer(@NonNull final String dockerImageName) {
         this.setDockerImageName(dockerImageName);
     }
