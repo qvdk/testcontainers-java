@@ -25,7 +25,7 @@ public class BaseWebDriverContainerTest {
     public static Network NETWORK = Network.newNetwork();
 
     @ClassRule
-    public static GenericContainer<?> HELLO_WORLD = new GenericContainer<>(DockerImageName.parse("testcontainers/helloworld:1.0.0"))
+    public static GenericContainer<?> HELLO_WORLD = new GenericContainer<>(DockerImageName.parse("testcontainers/helloworld:1.1.0"))
         .withNetwork(NETWORK)
         .withNetworkAliases("helloworld")
         .withExposedPorts(8080, 8081)
