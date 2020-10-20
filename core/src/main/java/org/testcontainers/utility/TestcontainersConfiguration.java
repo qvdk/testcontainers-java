@@ -12,6 +12,7 @@ import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.jetbrains.annotations.Contract;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.testcontainers.UnstableAPI;
 
@@ -186,7 +187,7 @@ public class TestcontainersConfiguration {
      */
     @Nullable
     @Contract("_, !null -> !null")
-    public String getEnvVarOrProperty(final String propertyName, @Nullable final String defaultValue) {
+    public String getEnvVarOrProperty(@NotNull final String propertyName, @Nullable final String defaultValue) {
         String envVarName = propertyName.replaceAll("\\.", "_").toUpperCase();
         if (!propertyName.startsWith("TESTCONTAINERS_")) {
             envVarName = "TESTCONTAINERS_" + envVarName;

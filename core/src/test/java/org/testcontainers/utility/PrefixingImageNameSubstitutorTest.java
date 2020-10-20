@@ -3,6 +3,7 @@ package org.testcontainers.utility;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -22,7 +23,7 @@ public class PrefixingImageNameSubstitutorTest {
 
     @Test
     public void testHappyPath() {
-        when(mockConfiguration.getEnvVarOrProperty(eq(PROPERTY_KEY))).thenReturn("someregistry.com/");
+        when(mockConfiguration.getEnvVarOrProperty(eq(PROPERTY_KEY), any())).thenReturn("someregistry.com/");
 
         final DockerImageName result = underTest.apply(DockerImageName.parse("some/image:tag"));
 
@@ -35,7 +36,7 @@ public class PrefixingImageNameSubstitutorTest {
 
     @Test
     public void testNoDoublePrefixing() {
-        when(mockConfiguration.getEnvVarOrProperty(eq(PROPERTY_KEY))).thenReturn("someregistry.com/");
+        when(mockConfiguration.getEnvVarOrProperty(eq(PROPERTY_KEY), any())).thenReturn("someregistry.com/");
 
         final DockerImageName result = underTest.apply(DockerImageName.parse("someregistry.com/some/image:tag"));
 
@@ -48,7 +49,7 @@ public class PrefixingImageNameSubstitutorTest {
 
     @Test
     public void testHandlesNullValue() {
-        when(mockConfiguration.getEnvVarOrProperty(eq(PROPERTY_KEY))).thenReturn(null);
+        when(mockConfiguration.getEnvVarOrProperty(eq(PROPERTY_KEY), any())).thenReturn(null);
 
         final DockerImageName result = underTest.apply(DockerImageName.parse("some/image:tag"));
 
@@ -61,7 +62,7 @@ public class PrefixingImageNameSubstitutorTest {
 
     @Test
     public void testHandlesEmptyValue() {
-        when(mockConfiguration.getEnvVarOrProperty(eq(PROPERTY_KEY))).thenReturn("");
+        when(mockConfiguration.getEnvVarOrProperty(eq(PROPERTY_KEY), any())).thenReturn("");
 
         final DockerImageName result = underTest.apply(DockerImageName.parse("some/image:tag"));
 
