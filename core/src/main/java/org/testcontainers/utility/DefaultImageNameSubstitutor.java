@@ -4,7 +4,8 @@ import com.google.common.annotations.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * TODO: Javadocs
+ * Testcontainers' default implementation of {@link ImageNameSubstitutor}.
+ * Delegates to {@link ConfigurationFileImageNameSubstitutor} followed by {@link PrefixingImageNameSubstitutor}.
  */
 @Slf4j
 public class DefaultImageNameSubstitutor extends ImageNameSubstitutor {

@@ -24,7 +24,7 @@ public class PrefixingImageNameSubstitutor extends ImageNameSubstitutor {
 
     @Override
     public DockerImageName apply(DockerImageName original) {
-        final String prefix = configuration.getEnvVarOrProperty(PROPERTY_KEY);
+        final String prefix = configuration.getEnvVarOrProperty(PROPERTY_KEY, "");
 
         if (prefix != null && !prefix.isEmpty()) {
             if (!original.asCanonicalNameString().startsWith(prefix)) {

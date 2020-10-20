@@ -4,7 +4,8 @@ import com.google.common.annotations.VisibleForTesting;
 import lombok.extern.slf4j.Slf4j;
 
 /**
- * TODO: Javadocs
+ * {@link ImageNameSubstitutor} which takes replacement image names from configuration.
+ * See {@link TestcontainersConfiguration} for the subset of image names which can be substituted using this mechanism.
  */
 @Slf4j
 public class ConfigurationFileImageNameSubstitutor extends ImageNameSubstitutor {
