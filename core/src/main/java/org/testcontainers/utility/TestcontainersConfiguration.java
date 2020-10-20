@@ -11,6 +11,7 @@ import lombok.SneakyThrows;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.jetbrains.annotations.Contract;
 import org.jetbrains.annotations.Nullable;
 import org.testcontainers.UnstableAPI;
 
@@ -31,6 +32,15 @@ import java.util.stream.Stream;
 
 /**
  * Provides a mechanism for fetching configuration/default settings.
+ * <p>
+ * Configuration may be provided in:
+ * <ul>
+ *     <li>A file in the user's home directory named <code>.testcontainers.properties</code></li>
+ *     <li>A file in the classpath named <code>testcontainers.properties</code></li>
+ *     <li>Environment variables</li>
+ * </ul>
+ * <p>
+ * Note that, if using environment variables, property names are in upper case separated by underscores.
  */
 @Data
 @Slf4j
@@ -114,7 +124,7 @@ public class TestcontainersConfiguration {
 
     public boolean isRyukPrivileged() {
         return Boolean
-            .parseBoolean((String) properties.getOrDefault("ryuk.container.privileged", "false"));
+            .parseBoolean(getEnvVarOrProperty("ryuk.container.privileged", "false"));
     }
 
     @Deprecated
@@ -128,7 +138,7 @@ public class TestcontainersConfiguration {
     }
 
     public Integer getRyukTimeout() {
-        return Integer.parseInt((String) properties.getOrDefault("ryuk.container.timeout", "30"));
+        return Integer.parseInt(getEnvVarOrProperty("ryuk.container.timeout", "30"));
     }
 
     @Deprecated
@@ -147,24 +157,25 @@ public class TestcontainersConfiguration {
     }
 
     public boolean isDisableChecks() {
-        return Boolean.parseBoolean((String) environmentProperties.getOrDefault("checks.disable", "false"));
+        return Boolean.parseBoolean(getEnvVarOrProperty("checks.disable", "false"));
     }
 
     @UnstableAPI
     public boolean environmentSupportsReuse() {
+        // specifically not supported as an environment variable
         return Boolean.parseBoolean((String) environmentProperties.getOrDefault("testcontainers.reuse.enable", "false"));
     }
 
     public String getDockerClientStrategyClassName() {
-        return (String) environmentProperties.get("docker.client.strategy");
+        return getEnvVarOrProperty("docker.client.strategy", null);
     }
 
     public String getTransportType() {
-        return properties.getProperty("transport.type", "okhttp");
+        return getEnvVarOrProperty("transport.type", "okhttp");
     }
 
     public Integer getImagePullPauseTimeout() {
-        return Integer.parseInt((String) properties.getOrDefault("pull.pause.timeout", "30"));
+        return Integer.parseInt(getEnvVarOrProperty("pull.pause.timeout", "30"));
     }
 
     /**
@@ -173,15 +184,20 @@ public class TestcontainersConfiguration {
      * @return the found value, or null if not set
      */
     @Nullable
-    public String getEnvVarOrProperty(final String propertyName) {
+    @Contract("_, !null -> !null")
+    public String getEnvVarOrProperty(final String propertyName, @Nullable final String defaultValue) {
         String envVarName = propertyName.replaceAll("\\.", "_").toUpperCase();
         if (!propertyName.startsWith("TESTCONTAINERS_")) {
             envVarName = "TESTCONTAINERS_" + envVarName;
         }
 
-        return Optional
-            .ofNullable(System.getenv().get(envVarName))
-            .orElse((String) environmentProperties.get(propertyName));
+        if (System.getenv().get(envVarName) != null) {
+            return System.getenv().get(envVarName);
+        } else if (properties.get(propertyName) != null) {
+            return (String) properties.get(propertyName);
+        } else {
+            return defaultValue;
+        }
     }
 
     @Synchronized
@@ -248,7 +264,7 @@ public class TestcontainersConfiguration {
             if (original.isCompatibleWith(entry.getKey())) {
                 return
                     Optional.ofNullable(entry.getValue())
-                        .map(properties::get)
+                        .map(propertyName -> getEnvVarOrProperty(propertyName, null))
                         .map(String::valueOf)
                         .map(String::trim)
                         .map(DockerImageName::parse)
