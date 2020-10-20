@@ -2,14 +2,19 @@
 
 You can override some default properties if your environment requires that.
 
-## Configuration file location
+## Configuration locations
 The configuration will be loaded from multiple locations. Properties are considered in the following order:
 
-1. `.testcontainers.properties` in user's home folder. Example locations:  
+1. Environment variables
+2. `.testcontainers.properties` in user's home folder. Example locations:  
 **Linux:** `/home/myuser/.testcontainers.properties`  
 **Windows:** `C:/Users/myuser/.testcontainers.properties`  
 **macOS:** `/Users/myuser/.testcontainers.properties`
-2. `testcontainers.properties` on classpath
+3. `testcontainers.properties` on classpath
+
+Note that when using environment variables, configuration property names should be set in upper 
+case with underscore separators, preceded by `TESTCONTAINERS_` - e.g. `checks.disable` becomes 
+`TESTCONTAINERS_CHECKS_DISABLE`.
 
 ## Disabling the startup checks
 > **checks.disable = [true|false]**

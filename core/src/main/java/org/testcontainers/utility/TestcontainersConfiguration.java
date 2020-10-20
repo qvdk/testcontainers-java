@@ -40,7 +40,8 @@ import java.util.stream.Stream;
  *     <li>Environment variables</li>
  * </ul>
  * <p>
- * Note that, if using environment variables, property names are in upper case separated by underscores.
+ * Note that, if using environment variables, property names are in upper case separated by underscores, preceded by
+ * <code>TESTCONTAINERS_</code>.
  */
 @Data
 @Slf4j
