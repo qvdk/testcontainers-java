@@ -26,18 +26,28 @@ It takes a couple of seconds, but if you want to speed up your tests, you can di
 
 ## Customizing images
 
+!!! note
+    This approach is discouraged and deprecated, but is documented for completeness.
+    Overriding individual image names via configuration may be removed in 2021.
+
 Testcontainers uses public Docker images to perform different actions like startup checks, VNC recording and others. 
 Some companies disallow the usage of Docker Hub, but you can override `*.image` properties with your own images from your private registry to workaround that.
 
+> **ryuk.container.image = testcontainersofficial/ryuk:0.3.0**
+> Performs fail-safe cleanup of containers, and always required (unless [Ryuk is disabled](#disabling-ryuk))
+
 > **tinyimage.container.image = alpine:3.5**  
-> Used by Testcontainers' core
+> Used to check whether images can be pulled at startup, and always required (unless [startup checks are disabled](#disabling-the-startup-checks))
+
+> **sshd.container.image = testcontainers/sshd:1.0.0**  
+> Required if [exposing host ports to containers](./networking.md#exposing-host-ports-to-the-container)
 
 > **vncrecorder.container.image = testcontainersofficial/vnc-recorder:1.1.0**  
-> Used by VNC recorder in Testcontainers' Seleniun integration
+> Used by VNC recorder in Testcontainers' Selenium integration
 
-> **ambassador.container.image = richnorth/ambassador:latest**  
+> **socat.container.image = alpine/socat**  
 > **compose.container.image = docker/compose:1.8.0**  
-> Used by Docker Compose integration
+> Required if using [Docker Compose](../modules/docker_compose.md)
 
 > **kafka.container.image = confluentinc/cp-kafka**  
 > Used by KafkaContainer 
@@ -45,11 +55,10 @@ Some companies disallow the usage of Docker Hub, but you can override `*.image` 
 > **localstack.container.image = localstack/localstack**  
 > Used by LocalStack
 
-Another possibility is to set up a registry mirror in your environment so that all images are pulled from there and not directly from Docker Hub.
-For more information, see the [official Docker documentation about "Registry as a pull through cache"](https://docs.docker.com/registry/recipes/mirror/).
+> **pulsar.container.image = apachepulsar/pulsar:2.2.0**  
+> Used by Apache Pulsar
 
-!!!tip
-    Registry mirror currently only works for Docker images with image name that has no registry specified (for example, for Docker image `mariadb:10.3.6`, it works, for Docker image `quay.io/something/else`, not).
+See [Image Name Substitution](./image_name_substitution.md) for other strategies for substituting image names to pull from other registries.
 
 ## Customizing Ryuk resource reaper
 
