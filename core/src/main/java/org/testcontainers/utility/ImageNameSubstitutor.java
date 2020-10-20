@@ -10,7 +10,9 @@ import java.util.stream.StreamSupport;
 import static java.util.Comparator.comparingInt;
 
 /**
- * TODO: Javadocs
+ * An image name substitutor converts a Docker image name, as may be specified in code, to an alternative name.
+ * This is intended to provide a way to override image names, for example to enforce pulling of images from a private
+ * registry.
  */
 @Slf4j
 public abstract class ImageNameSubstitutor implements Function<DockerImageName, DockerImageName> {
